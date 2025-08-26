@@ -18,22 +18,25 @@ func (cfg *Config) SetUser(username string) error {
 
 const configFileName string = ".gatorconfig.json"
 
-func Read() (Config, error) {
+func Read() (cfg Config, err error) {
 	configFilePath, err := getConfigFilePath()
 	if err != nil {
-		return Config{}, nil
+		return Config{}, err
 	}
 
 	configFile, err := os.Open(configFilePath)
 	if err != nil {
 		return Config{}, err
 	}
-	defer configFile.Close()
-
-	cfg := Config{}
+	defer func() {
+		closeErr := configFile.Close()
+		if err == nil {
+			err = closeErr
+		}
+	}()
 	err = json.NewDecoder(configFile).Decode(&cfg)
 	if err != nil {
-		return Config{}, nil
+		return Config{}, err
 	}
 
 	return cfg, nil
@@ -47,7 +50,7 @@ func getConfigFilePath() (string, error) {
 	return filepath.Join(homeDir, configFileName), nil
 }
 
-func write(cfg Config) error {
+func write(cfg Config) (err error) {
 	configFilePath, err := getConfigFilePath()
 	if err != nil {
 		return err
@@ -57,7 +60,12 @@ func write(cfg Config) error {
 	if err != nil {
 		return err
 	}
-	defer configFile.Close()
+	defer func() {
+		closeErr := configFile.Close()
+		if err == nil {
+			err = closeErr
+		}
+	}()
 
 	err = json.NewEncoder(configFile).Encode(cfg)
 	if err != nil {
