@@ -1,8 +1,8 @@
 package config
 
 import (
-	"encoding/json"
 	"os"
+	"encoding/json"
 	"path/filepath"
 )
 
