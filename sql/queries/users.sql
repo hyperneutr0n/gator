@@ -1,12 +1,12 @@
 -- name: CreateUser :one
 INSERT INTO users (id, name, created_at, updated_at)
 VALUES (
+    DEFAULT,
     $1, 
-    $2, 
-    $3, 
-    $4
+    DEFAULT, 
+    DEFAULT
 )
 RETURNING *;
 
 -- name: GetUser :one
-SELECT * FROM users WHERE id=$1;
+SELECT * FROM users WHERE name=$1;
