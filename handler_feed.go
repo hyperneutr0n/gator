@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/hyperneutr0n/rss-aggregator/internal/database"
 )
@@ -28,6 +29,34 @@ func handlerAddFeed(s *state, cmd command) error {
 		return fmt.Errorf("failed creating feed record: %w", err)
 	}
 
-	fmt.Println(feed)
+	printFeed(feed)
 	return nil
+}
+
+func handlerFeeds(s *state, cmd command) error {
+	feeds, err := s.db.GetFeeds(context.Background())
+	if err != nil {
+		return fmt.Errorf("failed fetching feeds from database: %w", err)
+	}
+	
+	for _, feed := range feeds {
+		printFeed(database.Feed{
+			ID: feed.ID,
+			UserID: feed.UserID,
+			Name: feed.Name,
+			Url: feed.Url,
+			CreatedAt: time.Time{},
+			UpdatedAt: time.Time{},
+		})
+		fmt.Printf("*User Name:		%v\n", feed.UserName)
+	}
+
+	return nil
+}
+
+func printFeed(feed database.Feed) {
+	fmt.Printf("* ID:			%v\n", feed.ID)
+	fmt.Printf("* Name:			%v\n", feed.Name)
+	fmt.Printf("* URL:			%v\n", feed.Url)
+	fmt.Printf("* User ID:		%v\n", feed.UserID)
 }
