@@ -15,3 +15,10 @@ SELECT f.*, u.name AS user_name
 FROM feeds AS f
 INNER JOIN users AS u
 ON u.id = f.user_id;
+
+-- name: GetFeed :one
+SELECT f.*, u.name AS user_name
+FROM feeds AS f
+INNER JOIN users AS u
+ON u.id = f.user_id
+WHERE f.url = $1;
