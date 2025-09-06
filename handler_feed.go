@@ -11,14 +11,9 @@ import (
 )
 
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.Args) < 2 {
 		return errors.New("addFeed expects name and url as an arguments")
-	}
-
-	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUsername)
-	if err != nil {
-		return fmt.Errorf("failed fetching current user's id: %w", err)
 	}
 
 	feed, err := s.db.CreateFeed(context.Background(), database.CreateFeedParams{
@@ -67,7 +62,7 @@ func printFeed(feed database.Feed) {
 	fmt.Printf("* User ID:		%v\n", feed.UserID)
 }
 
-func handlerFollow (s *state, cmd command) error {
+func handlerFollow (s *state, cmd command, user database.User) error {
 	if len(cmd.Args) < 1 {
 		return errors.New("follow command expect a feed's link as an argument")
 	}
@@ -75,11 +70,6 @@ func handlerFollow (s *state, cmd command) error {
 	feed, err := s.db.GetFeed(context.Background(), cmd.Args[0])
 	if err != nil {
 		return fmt.Errorf("error when looking up existing feed: %w", err)
-	}
-	
-	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUsername)
-	if err != nil {
-		return fmt.Errorf("error when looking up current user's id: %w", err)
 	}
 
 	if err := followFeed(s, user.ID, feed.ID); err != nil {
@@ -89,12 +79,7 @@ func handlerFollow (s *state, cmd command) error {
 	return nil
 }
 
-func handlerFollowing (s *state, cmd command) error {
-	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUsername)
-	if err != nil {
-		return fmt.Errorf("error when looking up your id: %w", err)
-	}
-
+func handlerFollowing (s *state, cmd command, user database.User) error {
 	followedFeeds, err := s.db.GetFeedFollowForUser(context.Background(), user.ID)
 	if err != nil {
 		return fmt.Errorf("error when fetching your followed feeds: %w", err)
