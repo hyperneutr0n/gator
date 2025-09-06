@@ -3,7 +3,7 @@ CREATE TABLE feeds (
     id SERIAL PRIMARY KEY,
     user_id UUID NOT NULL,
     name TEXT NOT NULL,
-    url TEXT NOT NULL,
+    url TEXT NOT NULL UNIQUE,
     created_at TIMESTAMP NOT NULL DEFAULT TIMEZONE('utc', NOW()),
     updated_at TIMESTAMP NOT NULL DEFAULT TIMEZONE('utc', NOW()),
 

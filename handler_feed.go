@@ -106,3 +106,25 @@ func followFeed(s *state, userID uuid.UUID, feedID int32) error {
 	
 	return nil
 }
+
+func handlerUnfollow(s *state, cmd command, user database.User) error {
+	if len(cmd.Args) < 1 {
+		return errors.New("unfollow expects url as an argument")
+	}
+
+	feed, err := s.db.GetFeed(context.Background(), cmd.Args[0])
+	if err != nil {
+		return fmt.Errorf("failed fetching feed id: %w", err)
+	}
+
+	err = s.db.UnfollowFeed(context.Background(), database.UnfollowFeedParams{
+		UserID: user.ID,
+		FeedID: feed.ID,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to unfollow %v: %w", feed.Name, err)
+	}
+
+	fmt.Printf("Successfully unfollow %v\n", feed.Name)
+	return nil
+}

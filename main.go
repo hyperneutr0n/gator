@@ -40,6 +40,7 @@ func main() {
 	cmds.register("feeds", handlerFeeds)
 	cmds.register("follow", isLoggedIn(handlerFollow))
 	cmds.register("following", isLoggedIn(handlerFollowing))
+	cmds.register("unfollow", isLoggedIn(handlerUnfollow))
 
 	if len(os.Args) < 2 {
 		log.Fatal("Usage: gator <command> [args...]")
