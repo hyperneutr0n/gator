@@ -3,10 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
-	"os/exec"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/hyperneutr0n/rss-aggregator/internal/database"
@@ -30,37 +27,11 @@ func handlerBrowse(s *state, cmd command, user database.User) error {
 		return fmt.Errorf("failed fetching posts from database: %w", err)
 	}
 
-	shellCmd := exec.Command("stty", "size")
-	shellCmd.Stdin = os.Stdin
-	out, err := shellCmd.Output()
-	if err != nil {
-		fmt.Println("failed getting terminal width")
-	}
-
-	terminalSize := strings.Split(strings.TrimSpace(string(out)), " ")
-	width, err := strconv.Atoi(terminalSize[1])
-	if err != nil {
-		fmt.Println("failed parsing width")
-	}
-	printLineLimitter(width)
-
 	for _, post := range posts {
 		printPost(post)
-		printLineLimitter(width)
+		printLineLimitter()
 	}
 	return nil
-}
-
-func printLineLimitter(width int) {
-	length := 30
-	if width != 0 {
-		length = width
-	}
-	line := ""
-	for range length {
-		line += "="
-	}
-	fmt.Println(line)
 }
 
 func printPost(post database.Post) {

@@ -40,6 +40,7 @@ func handlerFeeds(s *state, cmd command) error {
 		return fmt.Errorf("failed fetching feeds from database: %w", err)
 	}
 	
+	printLineLimitter()
 	for _, feed := range feeds {
 		printFeed(database.Feed{
 			ID: feed.ID,
@@ -49,7 +50,8 @@ func handlerFeeds(s *state, cmd command) error {
 			CreatedAt: time.Time{},
 			UpdatedAt: time.Time{},
 		})
-		fmt.Printf("*User Name:		%v\n", feed.UserName)
+		fmt.Printf("* User Name:		%v\n", feed.UserName)
+		printLineLimitter()
 	}
 
 	return nil
