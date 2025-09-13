@@ -11,22 +11,97 @@ Gator is a Go-based RSS Feed Aggregator project that allows you to collect and m
 - [License](#license)
 
 ## Installation
+Pre-Requisite
+- go v1.23 or above
+- Postgresql server v15
+- Goose Migration ([installation](https://github.com/pressly/goose#install))
+
+\
+Clone the repository
 ```bash
-# Clone the repository
 git clone https://github.com/hyperneutr0n/gator.git
+```
 
-# Navigate to the project directory
+Navigate to the project directory
+```bash
 cd gator
+```
 
-# Download Go dependencies
+Download Go dependencies
+```bash
 go mod download
+```
+
+Create .gatorconfig.json config file in your home directory
+```bash
+conn_string="postgres://username:password@localhost:5432/dbname" && 
+echo "{\"db_url\":\"$conn_string\"}" > ~/.gatorconfig.json
+```
+
+Install the Project
+```bash
+go install .
+```
+
+Run migrations
+```bash
+goose "postgres://username:password@localhost:5432/dbname" up
 ```
 
 ## Usage
 To use this RSS Feed Aggregator:
 
-```go
-// Example usage will be added here
+First register and login
+```bash
+gator register <username>
+gator login <username>
+```
+
+See all registered users
+```bash
+gator users
+```
+
+Delete all users
+```bash
+gator reset
+```
+
+Add a feed (will automatically follow the feed as well)
+```bash
+gator addfeed <feed url>
+# do include the protocol (https://)
+```
+
+See all feeds that have been added
+```bash
+gator feeds
+```
+
+Follow a feed
+```bash
+gator follow <feed url>
+```
+
+List all feeds you've followed
+```bash
+gator following
+```
+
+Unfollow a feed
+```bash
+gator unfollow <feed url>
+```
+
+Start Aggregation
+```bash
+gator agg <time between fetching>
+# example: 1s, 1m, 1h
+```
+
+Browse posts that have been aggregated
+```bash
+gator browse <limit, default=2>
 ```
 
 ## Features
